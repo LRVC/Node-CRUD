@@ -21,7 +21,6 @@ var handleRequest = function(req, res) {
     return;
   }
 
-  console.log(req.url);
   function findId(urlPath) {
     var urlArr = urlPath.split('/');
     objId = urlArr[urlArr.length - 2];
@@ -64,7 +63,7 @@ var handleRequest = function(req, res) {
         var newArray = dataArray[i].split("=");
         postParams[newArray[0]] = newArray[1];
       }
-      console.log(postParams);
+      
       
     var car = new Car(postParams);
     car.save(function (err) {
@@ -83,7 +82,6 @@ var handleRequest = function(req, res) {
     carId = findId(req.url);
     Car.find({_id: carId}, function(err, car) {
       var rendered = compiledShow({cars: car});
-      console.log(rendered);
       res.end(rendered);    
     });
   } else if(parseUrlPath(req.url) == 'edit') {
@@ -91,28 +89,43 @@ var handleRequest = function(req, res) {
     var editCar = fs.readFileSync('edit.jade', 'utf8');
     var compiledEdit = jade.compile(editCar, { pretty: true, filename: 'edit.jade' });
     carId = findId(req.url);
-    console.log(carId);
 
     Car.findOne({'_id': carId}, function(err, car) {
-      console.log(car);
       var rendered = compiledEdit({car: car});
       res.end(rendered);    
     });
 
 
     
-  } else if(parseUrlPath(req.url) == 'update' && req.method == 'POST') { 
-    var postParams = {};
+  } else if(parseUrlPath(req.url) == 'patch' && req.method == 'POST') { 
+    var updateParams = {};
     req.on('data', function(data) {
       var dataArray = data.toString().split("&");
+      console.log(dataArray)
       for (var i = 0; i < dataArray.length; i++) {
         var newArray = dataArray[i].split("=");
-        postParams[newArray[0]] = newArray[1];
+        updateParams[newArray[0]] = newArray[1];
       }
+      console.log(updateParams);
+      var carId = findId(req.url)
+        Car.findOne({ _id: carId }, function (err, car){
+          if (updateParams.driver !== '') {
+            car.driver = updateParams.driver;
+          } 
+          if (updateParams.make !== '') {
+            car.make = updateParams.make;
+          }
+          if (updateParams.model !== '') {
+            car.model = updateParams.model;  
+          }  
+          if (updateParams.year !== '') {
+            car.year = updateParams.year;  
+          }
+          car.save();
+      });
+        res.writeHead(301, {Location: 'http://localhost:1337/cars'})
+        res.end();
     });
-
-
-
   } else if(!isNaN(firstChar)) {
     carId = parseUrlPath(req.url);
 
@@ -121,7 +134,8 @@ var handleRequest = function(req, res) {
 
     })
       
-
+    res.writeHead(301, {Location: 'http://localhost:1337/cars'})
+    res.end();
   } else {
     res.writeHead(200);
     res.end('A new programming journey awaits');
