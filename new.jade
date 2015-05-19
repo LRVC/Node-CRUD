@@ -1,0 +1,15 @@
+doctype html
+html(lang="en")
+	body
+		h1 New Car
+			form(name="cars", action="/cars", method="post")
+				p Driver
+				input(type="text", name="driver")
+				p Make
+				input(type="text", name="make")
+				p Model
+				input(type="text", name="model")
+				p Year
+				input(type="number", name="year")
+
+				input(type="submit", value="Create Car")

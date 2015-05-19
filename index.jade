@@ -1,10 +1,18 @@
 doctype html
 html(lang="en")
   body
-    h1 Welcome to the Cars CRUD App!
+    h1= headline
     
     h4 Here is a listing of the current cars we have:
+
+    h1
+      a(href='/cars/new') New Car!
     
     ul
       for car in cars
-        li= car.driver + ' in a ' + car.year + ' ' + car.make + ' ' + car.model
+        li= car.driver + ' in a ' + car.year + ' ' + car.make + ' ' + car.model + ' '
+          a(href='/cars/' + car.id + '/show') Show 
+          a(href='/cars/' + car.id + '/edit') Edit 
+          a(href='/cars/' + car.id, method='delete') Delete 
+
+

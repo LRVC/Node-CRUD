@@ -1,0 +1,15 @@
+doctype html
+html(lang="en")
+	body
+		h1 Edit Car
+			form(name="car", action="/cars/"+ car.id +"/patch", method="post")
+				p Driver
+				input(type="text", name="driver", value=car.driver)
+				p Make
+				input(type="text", name="make", value=car.make)
+				p Model
+				input(type="text", name="model", value=car.model)
+				p Year
+				input(type="number", name="year", value=car.year)
+
+				input(type="submit", value="Update Car")
